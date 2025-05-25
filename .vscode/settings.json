@@ -7,5 +7,7 @@
   },
   "files.readonlyInclude": {
     "**/routeTree.gen.ts": true
-  }
+  },
+  // https://github.com/prettier/prettier-vscode/issues/3696#issuecomment-2907738435
+  "prettier.prettierPath": "./node_modules/prettier"
 }
