@@ -11,9 +11,16 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as ClientSideFormSubmitRouteImport } from './routes/client-side-form-submit/route'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
+
+const ClientSideFormSubmitRouteRoute = ClientSideFormSubmitRouteImport.update({
+  id: '/client-side-form-submit',
+  path: '/client-side-form-submit',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -32,6 +39,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/client-side-form-submit': {
+      id: '/client-side-form-submit'
+      path: '/client-side-form-submit'
+      fullPath: '/client-side-form-submit'
+      preLoaderRoute: typeof ClientSideFormSubmitRouteImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -39,32 +53,37 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/client-side-form-submit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/client-side-form-submit'
+  id: '__root__' | '/' | '/client-side-form-submit'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ClientSideFormSubmitRouteRoute: typeof ClientSideFormSubmitRouteRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ClientSideFormSubmitRouteRoute: ClientSideFormSubmitRouteRoute,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +96,15 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/client-side-form-submit"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/client-side-form-submit": {
+      "filePath": "client-side-form-submit/route.tsx"
     }
   }
 }

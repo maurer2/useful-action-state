@@ -77,7 +77,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <nav className="p-2 flex gap-2 text-lg">
+        <nav className="p-2 flex gap-8 text-lg border-b border-gray-200 mb-2">
           <Link
             to="/"
             activeProps={{
@@ -87,8 +87,16 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           >
             Home
           </Link>{" "}
+          <Link
+            to="/client-side-form-submit"
+            activeProps={{
+              className: "font-bold",
+            }}
+            activeOptions={{ exact: true }}
+          >
+            Client side only
+          </Link>{" "}
         </nav>
-        <hr />
         {children}
         <TanStackRouterDevtools position="bottom-right" />
         <Scripts />
