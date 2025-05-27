@@ -23,6 +23,7 @@ const searchAction = async (
   const termRaw = formData.get('term');
 
   const term = typeof termRaw === 'string' ? termRaw : previousFormState.fields.term.value;
+  const hasTermError = !term.length || term.includes('test');
 
   // todo search logic
 
@@ -31,11 +32,11 @@ const searchAction = async (
       fields: {
         term: {
           value: term,
-          // errorMessage: 'Term is invalid.',
+          errorMessage: hasTermError ? 'Term is invalid.' : undefined,
         },
       },
     });
-  }, 2000);
+  }, 1500);
 
   return searchActionPromise;
 };
@@ -49,7 +50,7 @@ function RouteComponent() {
     },
   });
 
-  const hasTermError = Boolean(formState.fields.term.errorMessage);
+  const hasTermError = Boolean(formState.fields.term.errorMessage) && !isPending;
 
   return (
     <main className="container mx-auto p-2">
@@ -72,17 +73,15 @@ function RouteComponent() {
             <input
               type="text"
               defaultValue={formState.fields.term.value}
-              className="border border-gray-200 p-1"
+              className="border border-gray-200 p-1 aria-[invalid=true]:border-red-600"
               placeholder="Please enter a term"
               name="term"
               id="term"
-              required
-              minLength={1}
               aria-invalid={hasTermError}
               aria-errormessage="term-error"
             />
             {hasTermError ? (
-              <p id="term-error" className="col-start-2 col-end-auto">
+              <p id="term-error" className="col-start-2 col-end-auto text-red-600">
                 Term is invalid.
               </p>
             ) : null}
