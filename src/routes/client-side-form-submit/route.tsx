@@ -89,13 +89,11 @@ function RouteComponent() {
             <label htmlFor="term">Term</label>
             <input
               defaultValue={formState.fields.term.value}
-              className="border border-gray-200 p-1 aria-[invalid=true]:border-red-600"
+              className="border border-gray-200 p-1 focus-visible:outline-offset-1 focus-visible:outline-blue-500 aria-[invalid=true]:border-red-600"
               type="search"
               placeholder="Please enter a term"
               name="term"
               id="term"
-              // role="searchbox"
-              aria-label="term input field"
               aria-invalid={hasTermError}
               aria-errormessage="term-error"
             />
@@ -108,6 +106,7 @@ function RouteComponent() {
           <div className="flex gap-4">
             <button
               type="submit"
+              className="basis-full border border-gray-200 px-4 py-1 focus-visible:outline-offset-1 focus-visible:outline-blue-500 @md/form:basis-auto"
               name="action"
               value="submit"
             >
@@ -115,7 +114,7 @@ function RouteComponent() {
             </button>
             <button
               type="submit"
-              className="border border-gray-200 px-4 py-1"
+              className="basis-full border border-gray-200 px-4 py-1 focus-visible:outline-offset-1 focus-visible:outline-blue-500 @md/form:basis-auto"
               name="action"
               value="reset"
             >
@@ -126,9 +125,9 @@ function RouteComponent() {
       </search>
 
       {hasData ? (
-        <section className="mb-4">
+        <section className="mb-8">
           <h2 className="mb-4 text-xl" role="status" aria-atomic="true">
-            There are <span>{formState?.data?.length}</span> results for{' '}
+            There are <span>{formState?.data?.length ?? 0}</span> results for{' '}
             <span>"{formState.fields.term.value}"</span>
           </h2>
           {hasEntries ? (
