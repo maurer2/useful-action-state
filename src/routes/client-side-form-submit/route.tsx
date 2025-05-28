@@ -15,36 +15,46 @@ export const Route = createFileRoute('/client-side-form-submit')({
   component: RouteComponent,
 });
 
+const defaultFormState: FormState = {
+  fields: {
+    term: {
+      value: '',
+    },
+  },
+};
+
 const searchAction = async (
   previousFormState: FormState,
   formData: FormData,
 ): Promise<FormState> => {
   const { promise: searchActionPromise, resolve } = Promise.withResolvers<FormState>();
 
-  // todo reset
-  // if (formData.get('action') === 'reset') {
-  //   console.log('reset');
-  // }
+  if (formData.get('action') === 'reset') {
+    resolve(defaultFormState);
+  }
 
   const termRaw = formData.get('term');
   const term = typeof termRaw === 'string' ? termRaw : previousFormState.fields.term.value;
   const hasTermError = !term.length || term.endsWith('test');
 
-  const fields = {
-    term: {
-      value: term,
-      errorMessage: hasTermError ? 'Term is invalid.' : undefined,
+  const newFormState: FormState = {
+    ...defaultFormState,
+    fields: {
+      term: {
+        value: term,
+        errorMessage: hasTermError ? 'Term is invalid.' : undefined,
+      },
     },
   };
 
   if (hasTermError) {
-    resolve({ fields });
+    resolve(newFormState);
   } else {
     setTimeout(() => {
       const dummyResults = Array.from({ length: 9 }, (_, index) => `Result ${index + 1}`);
 
       resolve({
-        fields,
+        ...newFormState,
         data: dummyResults,
       });
     }, 1500);
@@ -54,13 +64,7 @@ const searchAction = async (
 };
 
 function RouteComponent() {
-  const [formState, formAction, isPending] = useActionState(searchAction, {
-    fields: {
-      term: {
-        value: '',
-      },
-    },
-  });
+  const [formState, formAction, isPending] = useActionState(searchAction, defaultFormState);
 
   const hasTermError = typeof formState.fields.term.errorMessage !== 'undefined' && !isPending;
   const hasData = typeof formState.data !== 'undefined' && !isPending;
@@ -102,17 +106,21 @@ function RouteComponent() {
             ) : null}
           </fieldset>
           <div className="flex gap-4">
-            <button type="submit" className="border border-gray-200 px-4 py-1">
+            <button
+              type="submit"
+              name="action"
+              value="submit"
+            >
               Search
             </button>
-            {/* <button
+            <button
               type="submit"
               className="border border-gray-200 px-4 py-1"
               name="action"
               value="reset"
             >
               Reset
-            </button> */}
+            </button>
           </div>
         </form>
       </search>
