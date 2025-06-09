@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useActionState } from 'react';
+import { useActionState, useRef, useMemo, type ChangeEvent } from 'react';
 
 type FormState = {
   fields: {
@@ -63,8 +63,28 @@ const searchAction = async (
   return searchActionPromise;
 };
 
+// todo: improve typings
+const debounce = (callback: any, timeout = 500) => {
+  let timer: number | undefined;
+
+  return (...args: any) => {
+    clearTimeout(timer);
+
+    timer = window.setTimeout(() => callback.apply(this, args), timeout);
+  };
+};
+
 function RouteComponent() {
   const [formState, formAction, isPending] = useActionState(searchAction, defaultFormState);
+  const formElement = useRef<HTMLFormElement>(null);
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+
+    formElement.current?.requestSubmit();
+  };
+
+  const debounceHandleChange = useMemo(() => debounce(handleChange), []);
 
   const hasTermError = typeof formState.fields.term.errorMessage !== 'undefined' && !isPending;
   const hasData = typeof formState.data !== 'undefined' && !isPending;
@@ -78,6 +98,7 @@ function RouteComponent() {
         <form
           action={formAction}
           inert={isPending}
+          ref={formElement}
           className="@container/form inert:animate-pulse inert:opacity-50 motion-reduce:transition-none"
           autoComplete="off"
           autoCorrect="off"
@@ -96,6 +117,7 @@ function RouteComponent() {
               id="term"
               aria-invalid={hasTermError}
               aria-errormessage="term-error"
+              onChange={debounceHandleChange}
             />
             {hasTermError ? (
               <p id="term-error" className="col-start-2 col-end-auto text-red-600">
