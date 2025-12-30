@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as ClientSideFormSubmitRouteImport } from './routes/client-side-form-submit/route'
+import { Route as ActivityTestRouteImport } from './routes/activity-test/route'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
@@ -19,6 +20,12 @@ import { Route as IndexImport } from './routes/index'
 const ClientSideFormSubmitRouteRoute = ClientSideFormSubmitRouteImport.update({
   id: '/client-side-form-submit',
   path: '/client-side-form-submit',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ActivityTestRouteRoute = ActivityTestRouteImport.update({
+  id: '/activity-test',
+  path: '/activity-test',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -39,6 +46,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/activity-test': {
+      id: '/activity-test'
+      path: '/activity-test'
+      fullPath: '/activity-test'
+      preLoaderRoute: typeof ActivityTestRouteImport
+      parentRoute: typeof rootRoute
+    }
     '/client-side-form-submit': {
       id: '/client-side-form-submit'
       path: '/client-side-form-submit'
@@ -53,36 +67,41 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/activity-test': typeof ActivityTestRouteRoute
   '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/activity-test': typeof ActivityTestRouteRoute
   '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/activity-test': typeof ActivityTestRouteRoute
   '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/client-side-form-submit'
+  fullPaths: '/' | '/activity-test' | '/client-side-form-submit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/client-side-form-submit'
-  id: '__root__' | '/' | '/client-side-form-submit'
+  to: '/' | '/activity-test' | '/client-side-form-submit'
+  id: '__root__' | '/' | '/activity-test' | '/client-side-form-submit'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ActivityTestRouteRoute: typeof ActivityTestRouteRoute
   ClientSideFormSubmitRouteRoute: typeof ClientSideFormSubmitRouteRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ActivityTestRouteRoute: ActivityTestRouteRoute,
   ClientSideFormSubmitRouteRoute: ClientSideFormSubmitRouteRoute,
 }
 
@@ -97,11 +116,15 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/activity-test",
         "/client-side-form-submit"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/activity-test": {
+      "filePath": "activity-test/route.tsx"
     },
     "/client-side-form-submit": {
       "filePath": "client-side-form-submit/route.tsx"

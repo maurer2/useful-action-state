@@ -89,6 +89,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           >
             Client side only
           </Link>
+          <Link
+            to="/activity-test"
+            activeProps={{
+              className: 'font-bold',
+            }}
+            activeOptions={{ exact: true }}
+          >
+            Activity component
+          </Link>
         </nav>
         {children}
         <TanStackRouterDevtools position="bottom-right" />
