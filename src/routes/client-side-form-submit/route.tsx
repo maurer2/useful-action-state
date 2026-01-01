@@ -1,19 +1,20 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useActionState, useRef, useMemo, type ChangeEvent } from 'react';
+import { createFileRoute } from '@tanstack/react-router'
+import { useActionState, useRef, useMemo, type ChangeEvent } from 'react'
+import { debounce as debounce2 } from 'es-toolkit'
 
 type FormState = {
   fields: {
     term: {
-      value: string;
-      errorMessage?: string;
-    };
-  };
-  data?: string[];
-};
+      value: string
+      errorMessage?: string
+    }
+  }
+  data?: string[]
+}
 
 export const Route = createFileRoute('/client-side-form-submit')({
   component: RouteComponent,
-});
+})
 
 const defaultFormState: FormState = {
   fields: {
@@ -21,21 +22,23 @@ const defaultFormState: FormState = {
       value: '',
     },
   },
-};
+}
 
 const searchAction = async (
   previousFormState: FormState,
   formData: FormData,
 ): Promise<FormState> => {
-  const { promise: searchActionPromise, resolve } = Promise.withResolvers<FormState>();
+  const { promise: searchActionPromise, resolve } =
+    Promise.withResolvers<FormState>()
 
   if (formData.get('action') === 'reset') {
-    resolve(defaultFormState);
+    resolve(defaultFormState)
   }
 
-  const termRaw = formData.get('term');
-  const term = typeof termRaw === 'string' ? termRaw : previousFormState.fields.term.value;
-  const hasTermError = !term.length || term.endsWith('test');
+  const termRaw = formData.get('term')
+  const term =
+    typeof termRaw === 'string' ? termRaw : previousFormState.fields.term.value
+  const hasTermError = !term.length || term.endsWith('test')
 
   const newFormState: FormState = {
     ...defaultFormState,
@@ -45,50 +48,57 @@ const searchAction = async (
         errorMessage: hasTermError ? 'Term is invalid.' : undefined,
       },
     },
-  };
+  }
 
   if (hasTermError) {
-    resolve(newFormState);
+    resolve(newFormState)
   } else {
     setTimeout(() => {
-      const dummyResults = Array.from({ length: 9 }, (_, index) => `Result ${index + 1}`);
+      const dummyResults = Array.from(
+        { length: 9 },
+        (_, index) => `Result ${index + 1}`,
+      )
 
       resolve({
         ...newFormState,
         data: dummyResults,
-      });
-    }, 1500);
+      })
+    }, 1500)
   }
 
-  return searchActionPromise;
-};
+  return searchActionPromise
+}
 
 // todo: improve typings
-const debounce = (callback: any, timeout = 500) => {
-  let timer: number | undefined;
+// const debounce = (callback: any, timeout = 500) => {
+//   let timer: number | undefined;
 
-  return (...args: any) => {
-    clearTimeout(timer);
+//   return (...args: any) => {
+//     clearTimeout(timer);
 
-    timer = window.setTimeout(() => callback.apply(this, args), timeout);
-  };
-};
+//     timer = window.setTimeout(() => callback.apply(this, args), timeout);
+//   };
+// };
 
 function RouteComponent() {
-  const [formState, formAction, isPending] = useActionState(searchAction, defaultFormState);
-  const formElement = useRef<HTMLFormElement>(null);
+  const [formState, formAction, isPending] = useActionState(
+    searchAction,
+    defaultFormState,
+  )
+  const formElement = useRef<HTMLFormElement>(null)
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    formElement.current?.requestSubmit();
-  };
+    formElement.current?.requestSubmit()
+  }
 
-  const debounceHandleChange = useMemo(() => debounce(handleChange), []);
+  const debounceHandleChange = useMemo(() => debounce2(handleChange, 500), [])
 
-  const hasTermError = typeof formState.fields.term.errorMessage !== 'undefined' && !isPending;
-  const hasData = typeof formState.data !== 'undefined' && !isPending;
-  const hasEntries = Boolean(formState.data?.length) && !isPending;
+  const hasTermError =
+    typeof formState.fields.term.errorMessage !== 'undefined' && !isPending
+  const hasData = typeof formState.data !== 'undefined' && !isPending
+  const hasEntries = Boolean(formState.data?.length) && !isPending
 
   return (
     <main className="container mx-auto p-2">
@@ -110,6 +120,7 @@ function RouteComponent() {
             <label htmlFor="term">Term</label>
             <input
               defaultValue={formState.fields.term.value}
+              onChange={debounceHandleChange}
               className="border border-gray-200 p-1 focus-visible:outline-offset-1 focus-visible:outline-blue-500 aria-[invalid=true]:border-red-600"
               type="search"
               placeholder="Please enter a term"
@@ -117,10 +128,12 @@ function RouteComponent() {
               id="term"
               aria-invalid={hasTermError}
               aria-errormessage="term-error"
-              onChange={debounceHandleChange}
             />
             {hasTermError ? (
-              <p id="term-error" className="col-start-2 col-end-auto text-red-600">
+              <p
+                id="term-error"
+                className="col-start-2 col-end-auto text-red-600"
+              >
                 Term is invalid.
               </p>
             ) : null}
@@ -154,7 +167,9 @@ function RouteComponent() {
           </h2>
           {hasEntries ? (
             <ul className="flex list-inside list-disc flex-col gap-4">
-              {formState?.data?.map((entry) => <li key={entry}>{entry}</li>)}
+              {formState?.data?.map((entry) => (
+                <li key={entry}>{entry}</li>
+              ))}
             </ul>
           ) : (
             <p>No results for term</p>
@@ -162,5 +177,5 @@ function RouteComponent() {
         </section>
       ) : null}
     </main>
-  );
+  )
 }

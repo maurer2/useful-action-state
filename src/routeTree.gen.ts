@@ -8,82 +8,44 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as ClientSideFormSubmitRouteRouteImport } from './routes/client-side-form-submit/route'
+import { Route as ActivityTestRouteRouteImport } from './routes/activity-test/route'
+import { Route as IndexRouteImport } from './routes/index'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as ClientSideFormSubmitRouteImport } from './routes/client-side-form-submit/route'
-import { Route as ActivityTestRouteImport } from './routes/activity-test/route'
-import { Route as IndexImport } from './routes/index'
-
-// Create/Update Routes
-
-const ClientSideFormSubmitRouteRoute = ClientSideFormSubmitRouteImport.update({
-  id: '/client-side-form-submit',
-  path: '/client-side-form-submit',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const ActivityTestRouteRoute = ActivityTestRouteImport.update({
+const ClientSideFormSubmitRouteRoute =
+  ClientSideFormSubmitRouteRouteImport.update({
+    id: '/client-side-form-submit',
+    path: '/client-side-form-submit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ActivityTestRouteRoute = ActivityTestRouteRouteImport.update({
   id: '/activity-test',
   path: '/activity-test',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/activity-test': {
-      id: '/activity-test'
-      path: '/activity-test'
-      fullPath: '/activity-test'
-      preLoaderRoute: typeof ActivityTestRouteImport
-      parentRoute: typeof rootRoute
-    }
-    '/client-side-form-submit': {
-      id: '/client-side-form-submit'
-      path: '/client-side-form-submit'
-      fullPath: '/client-side-form-submit'
-      preLoaderRoute: typeof ClientSideFormSubmitRouteImport
-      parentRoute: typeof rootRoute
-    }
-  }
-}
-
-// Create and export the route tree
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activity-test': typeof ActivityTestRouteRoute
   '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity-test': typeof ActivityTestRouteRoute
   '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute
+  __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/activity-test': typeof ActivityTestRouteRoute
   '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths: '/' | '/activity-test' | '/client-side-form-submit'
@@ -92,11 +54,36 @@ export interface FileRouteTypes {
   id: '__root__' | '/' | '/activity-test' | '/client-side-form-submit'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActivityTestRouteRoute: typeof ActivityTestRouteRoute
   ClientSideFormSubmitRouteRoute: typeof ClientSideFormSubmitRouteRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/client-side-form-submit': {
+      id: '/client-side-form-submit'
+      path: '/client-side-form-submit'
+      fullPath: '/client-side-form-submit'
+      preLoaderRoute: typeof ClientSideFormSubmitRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/activity-test': {
+      id: '/activity-test'
+      path: '/activity-test'
+      fullPath: '/activity-test'
+      preLoaderRoute: typeof ActivityTestRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -104,31 +91,15 @@ const rootRouteChildren: RootRouteChildren = {
   ActivityTestRouteRoute: ActivityTestRouteRoute,
   ClientSideFormSubmitRouteRoute: ClientSideFormSubmitRouteRoute,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/activity-test",
-        "/client-side-form-submit"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/activity-test": {
-      "filePath": "activity-test/route.tsx"
-    },
-    "/client-side-form-submit": {
-      "filePath": "client-side-form-submit/route.tsx"
-    }
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
   }
 }
-ROUTE_MANIFEST_END */

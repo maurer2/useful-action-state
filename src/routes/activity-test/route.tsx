@@ -1,23 +1,23 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useState, type ChangeEvent, Activity, useMemo } from 'react';
-import { debounce } from 'es-toolkit';
+import { createFileRoute } from '@tanstack/react-router'
+import { useState, type ChangeEvent, Activity, useMemo } from 'react'
+import { debounce } from 'es-toolkit'
 
 export const Route = createFileRoute('/activity-test')({
   component: ActivityTest,
-});
+})
 
-type Fields = 'query';
+type Fields = 'query'
 
 function ActivityTest() {
-  const [query, setQuery] = useState('');
-  const [showQuery, setShowQuery] = useState(false);
+  const [query, setQuery] = useState('')
+  const [showQuery, setShowQuery] = useState(false)
 
   async function submitAction(formData: FormData) {
-    const value = formData.get('query');
+    const value = formData.get('query')
 
-    console.log('Value submitted:', value);
+    console.log('Value submitted:', value)
 
-    return; // do nothing
+    return // do nothing
   }
 
   // flag update needs to be debounced, not query value update itself
@@ -25,18 +25,19 @@ function ActivityTest() {
   const debouncedShowQuery = useMemo(
     () =>
       debounce(() => {
-        setShowQuery(true);
+        setShowQuery(true)
       }, 500),
     [],
-  );
+  )
 
-  const handleChange = (field: Fields) => (event: ChangeEvent<HTMLInputElement>) => {
-    if (field === 'query') {
-      setQuery(event.currentTarget.value);
+  const handleChange =
+    (field: Fields) => (event: ChangeEvent<HTMLInputElement>) => {
+      if (field === 'query') {
+        setQuery(event.currentTarget.value)
+      }
+      setShowQuery(false) // set Activity back to background rendering state in case it was previously set to visible
+      debouncedShowQuery()
     }
-    setShowQuery(false); // set Activity back to background rendering state in case it was previously set to visible
-    debouncedShowQuery();
-  };
 
   return (
     <>
@@ -71,5 +72,5 @@ function ActivityTest() {
         </Activity>
       </section>
     </>
-  );
+  )
 }
