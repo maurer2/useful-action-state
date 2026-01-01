@@ -1,9 +1,9 @@
 import { json } from '@tanstack/react-start';
 import { createFileRoute } from '@tanstack/react-router';
-import type { User } from '../../../utils/users';
+import type { User } from '../../utils/users';
 
-// Broken
-export const ServerRoute = createFileRoute('/api/users')({
+// Must be called Route to be picked up by the route tree generator
+export const Route = createFileRoute('/api/users')({
   server: {
     handlers: {
       GET: async ({ request }) => {

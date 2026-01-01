@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ClientSideFormSubmitRouteRouteImport } from './routes/client-side-form-submit/route'
 import { Route as ActivityTestRouteRouteImport } from './routes/activity-test/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiUsersRouteImport } from './routes/api/users'
 
 const ClientSideFormSubmitRouteRoute =
   ClientSideFormSubmitRouteRouteImport.update({
@@ -29,35 +30,49 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiUsersRoute = ApiUsersRouteImport.update({
+  id: '/api/users',
+  path: '/api/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activity-test': typeof ActivityTestRouteRoute
   '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
+  '/api/users': typeof ApiUsersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity-test': typeof ActivityTestRouteRoute
   '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
+  '/api/users': typeof ApiUsersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/activity-test': typeof ActivityTestRouteRoute
   '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
+  '/api/users': typeof ApiUsersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/activity-test' | '/client-side-form-submit'
+  fullPaths: '/' | '/activity-test' | '/client-side-form-submit' | '/api/users'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/activity-test' | '/client-side-form-submit'
-  id: '__root__' | '/' | '/activity-test' | '/client-side-form-submit'
+  to: '/' | '/activity-test' | '/client-side-form-submit' | '/api/users'
+  id:
+    | '__root__'
+    | '/'
+    | '/activity-test'
+    | '/client-side-form-submit'
+    | '/api/users'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActivityTestRouteRoute: typeof ActivityTestRouteRoute
   ClientSideFormSubmitRouteRoute: typeof ClientSideFormSubmitRouteRoute
+  ApiUsersRoute: typeof ApiUsersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -83,6 +98,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/users': {
+      id: '/api/users'
+      path: '/api/users'
+      fullPath: '/api/users'
+      preLoaderRoute: typeof ApiUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -90,6 +112,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActivityTestRouteRoute: ActivityTestRouteRoute,
   ClientSideFormSubmitRouteRoute: ClientSideFormSubmitRouteRoute,
+  ApiUsersRoute: ApiUsersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
