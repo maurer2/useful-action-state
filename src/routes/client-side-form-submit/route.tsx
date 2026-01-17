@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useActionState, useMemo, useRef } from 'react';
+import { useActionState, useRef } from 'react';
 import { debounce as debounce2 } from 'es-toolkit';
 import type { ChangeEvent } from 'react';
 
@@ -80,13 +80,21 @@ function RouteComponent() {
   const [formState, formAction, isPending] = useActionState(searchAction, defaultFormState);
   const formElement = useRef<HTMLFormElement>(null);
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
+  // workaround for compiler + debounce and ref: https://github.com/facebook/react/issues/31290
+  // the compiler doesn't understand that handleSubmit = () => { formElement.current?.requestSubmit();}; is an event handler that is not called during render
+  // setFormElementRefCB ref callback runs after render
+  const debounceHandleChangeRef =
+    useRef<(event?: ChangeEvent<HTMLInputElement>) => void>(undefined);
+  const setFormElementRefCB = (element: HTMLFormElement | null) => {
+    if (!element) {
+      return;
+    }
 
-    formElement.current?.requestSubmit();
+    formElement.current = element;
+    debounceHandleChangeRef.current = debounce2(() => {
+      formElement.current?.requestSubmit();
+    }, 500);
   };
-
-  const debounceHandleChange = useMemo(() => debounce2(handleChange, 500), []);
 
   const hasTermError = typeof formState.fields.term.errorMessage !== 'undefined' && !isPending;
   const hasData = typeof formState.data !== 'undefined' && !isPending;
@@ -100,7 +108,7 @@ function RouteComponent() {
         <form
           action={formAction}
           inert={isPending}
-          ref={formElement}
+          ref={setFormElementRefCB}
           className="@container/form inert:animate-pulse inert:opacity-50 motion-reduce:transition-none"
           autoComplete="off"
           autoCorrect="off"
@@ -112,7 +120,7 @@ function RouteComponent() {
             <label htmlFor="term">Term</label>
             <input
               defaultValue={formState.fields.term.value}
-              onChange={debounceHandleChange}
+              onChange={() => debounceHandleChangeRef.current?.()} // compiler complains about onChange={debounceHandleChangeRef.current}
               className="border-foreground p-small focus-visible:outline-highlight aria-invalid:border-error border focus-visible:outline-offset-4"
               type="search"
               placeholder="Please enter a term"
@@ -120,6 +128,7 @@ function RouteComponent() {
               id="term"
               aria-invalid={hasTermError}
               aria-errormessage="term-error"
+              key={formState.fields.term.value}
             />
             {hasTermError ? (
               <p id="term-error" className="aria-invalid:border-error col-start-2 col-end-auto">
