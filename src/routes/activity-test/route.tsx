@@ -1,18 +1,19 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useState, type ChangeEvent, Activity, useMemo } from 'react';
+import { Activity, useMemo, useState } from 'react';
 import { debounce } from 'es-toolkit';
+import type { ChangeEvent } from 'react';
 
 export const Route = createFileRoute('/activity-test')({
   component: ActivityTest,
 });
 
-type Fields = 'query';
+type Fields = 'query' | 'query2';
 
 function ActivityTest() {
   const [query, setQuery] = useState('');
   const [showQuery, setShowQuery] = useState(false);
 
-  async function submitAction(formData: FormData) {
+  function submitAction(formData: FormData) {
     const value = formData.get('query');
 
     console.log('Value submitted:', value);

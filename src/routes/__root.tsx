@@ -1,10 +1,9 @@
-import type { PropsWithChildren } from 'react';
 import {
   HeadContent,
+  Link,
+  Outlet,
   Scripts,
   createRootRouteWithContext,
-  Outlet,
-  Link,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { TanStackDevtools } from '@tanstack/react-devtools';
@@ -13,6 +12,7 @@ import { DefaultCatchBoundary } from '../components/DefaultCatchBoundary';
 import { NotFound } from '../components/NotFound';
 
 import appCss from '../styles.css?url';
+import type { PropsWithChildren } from 'react';
 
 export const Route = createRootRouteWithContext()({
   head: () => ({

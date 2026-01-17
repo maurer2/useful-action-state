@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useActionState, useRef, useMemo, type ChangeEvent } from 'react';
+import { useActionState, useMemo, useRef } from 'react';
 import { debounce as debounce2 } from 'es-toolkit';
+import type { ChangeEvent } from 'react';
 
 type FormState = {
   fields: {
@@ -150,12 +151,12 @@ function RouteComponent() {
       {hasData ? (
         <section>
           <h2 className="mb-normal text-xl" role="status" aria-atomic="true">
-            There are <span>{formState?.data?.length ?? 0}</span> results for{' '}
+            There are <span>{formState.data?.length ?? 0}</span> results for{' '}
             <span>"{formState.fields.term.value}"</span>
           </h2>
           {hasEntries ? (
             <ul className="gap-small flex list-inside list-disc flex-col">
-              {formState?.data?.map((entry) => (
+              {formState.data?.map((entry) => (
                 <li key={entry}>{entry}</li>
               ))}
             </ul>
