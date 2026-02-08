@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useActionState, useRef } from 'react';
+import { useActionState, useRef, type ChangeEvent } from 'react';
 import { debounce as debounce2 } from 'es-toolkit';
-import type { ChangeEvent } from 'react';
 
 type FormState = {
   fields: {
