@@ -93,6 +93,16 @@ function RootDocument({ children }: PropsWithChildren) {
           >
             Activity component
           </Link>
+          <Link
+            to="/validity-state-api"
+            className="focus-visible:outline-highlight hover:underline focus-visible:underline focus-visible:outline-offset-4"
+            activeProps={{
+              className: 'font-bold',
+            }}
+            activeOptions={{ exact: true }}
+          >
+            Validity-state-api
+          </Link>
         </nav>
         <main className="mx-normal">{children}</main>
         <TanStackDevtools

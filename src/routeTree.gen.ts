@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ValidityStateApiRouteRouteImport } from './routes/validity-state-api/route'
 import { Route as ClientSideFormSubmitRouteRouteImport } from './routes/client-side-form-submit/route'
 import { Route as ActivityTestRouteRouteImport } from './routes/activity-test/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiUsersRouteImport } from './routes/api/users'
 
+const ValidityStateApiRouteRoute = ValidityStateApiRouteRouteImport.update({
+  id: '/validity-state-api',
+  path: '/validity-state-api',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClientSideFormSubmitRouteRoute =
   ClientSideFormSubmitRouteRouteImport.update({
     id: '/client-side-form-submit',
@@ -40,12 +46,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activity-test': typeof ActivityTestRouteRoute
   '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
+  '/validity-state-api': typeof ValidityStateApiRouteRoute
   '/api/users': typeof ApiUsersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity-test': typeof ActivityTestRouteRoute
   '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
+  '/validity-state-api': typeof ValidityStateApiRouteRoute
   '/api/users': typeof ApiUsersRoute
 }
 export interface FileRoutesById {
@@ -53,18 +61,30 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/activity-test': typeof ActivityTestRouteRoute
   '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
+  '/validity-state-api': typeof ValidityStateApiRouteRoute
   '/api/users': typeof ApiUsersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/activity-test' | '/client-side-form-submit' | '/api/users'
+  fullPaths:
+    | '/'
+    | '/activity-test'
+    | '/client-side-form-submit'
+    | '/validity-state-api'
+    | '/api/users'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/activity-test' | '/client-side-form-submit' | '/api/users'
+  to:
+    | '/'
+    | '/activity-test'
+    | '/client-side-form-submit'
+    | '/validity-state-api'
+    | '/api/users'
   id:
     | '__root__'
     | '/'
     | '/activity-test'
     | '/client-side-form-submit'
+    | '/validity-state-api'
     | '/api/users'
   fileRoutesById: FileRoutesById
 }
@@ -72,11 +92,19 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActivityTestRouteRoute: typeof ActivityTestRouteRoute
   ClientSideFormSubmitRouteRoute: typeof ClientSideFormSubmitRouteRoute
+  ValidityStateApiRouteRoute: typeof ValidityStateApiRouteRoute
   ApiUsersRoute: typeof ApiUsersRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/validity-state-api': {
+      id: '/validity-state-api'
+      path: '/validity-state-api'
+      fullPath: '/validity-state-api'
+      preLoaderRoute: typeof ValidityStateApiRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/client-side-form-submit': {
       id: '/client-side-form-submit'
       path: '/client-side-form-submit'
@@ -112,6 +140,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActivityTestRouteRoute: ActivityTestRouteRoute,
   ClientSideFormSubmitRouteRoute: ClientSideFormSubmitRouteRoute,
+  ValidityStateApiRouteRoute: ValidityStateApiRouteRoute,
   ApiUsersRoute: ApiUsersRoute,
 }
 export const routeTree = rootRouteImport

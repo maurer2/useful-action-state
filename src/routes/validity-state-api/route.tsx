@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 
-export const Route = createFileRoute('/activity-test')({
+export const Route = createFileRoute('/validity-state-api')({
   component: ValiditStateAPI,
 });
 
