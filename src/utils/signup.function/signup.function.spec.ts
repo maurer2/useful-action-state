@@ -73,7 +73,7 @@ describe('Signup Schema Extended', () => {
   describe('username', () => {
     it('should fail when username contains profanity', async () => {
       const result = await signupSchemaExtended.safeParseAsync({
-        username: 'twat',
+        username: 'twat-waffle',
         password: strongPassword,
       });
 
