@@ -1,34 +1,44 @@
 import { z } from 'zod';
 import { zxcvbn, zxcvbnOptions, type Score as PasswordStrengthScore } from '@zxcvbn-ts/core';
-import zxcvbnCommonPackage from '@zxcvbn-ts/language-common';
-import zxcvbnEnPackage from '@zxcvbn-ts/language-en';
+import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common';
+import * as zxcvbnEnPackage from '@zxcvbn-ts/language-en';
 import { Profanity } from '@2toad/profanity';
 
 type ValidatorResult = { isValid: true } | { isValid: false; message: string };
 
 const MIN_PASSWORD_STRENGTH: PasswordStrengthScore = 2; // 0 - 4, the higher, the better
 
-const passwordStrengthCheckOptions = {
+zxcvbnOptions.setOptions({
   translations: zxcvbnEnPackage.translations,
   graphs: zxcvbnCommonPackage.adjacencyGraphs,
   dictionary: {
     ...zxcvbnCommonPackage.dictionary,
     ...zxcvbnEnPackage.dictionary,
   },
-};
-zxcvbnOptions.setOptions(passwordStrengthCheckOptions);
+});
 
 const profanity = new Profanity({
   languages: ['en'],
 });
 
-// frontend
-export const signupSchemaBase = z.object({
-  username: z.string().min(1),
-  password: z.string().min(1),
+const signupSchemaClient = z.object({
+  username: z.string().min(5),
+  password: z.string().min(8),
 });
 
-const validatePasswordStrength = async (password: string): Promise<ValidatorResult> => {
+export const validateSignupFormClientSide = (fields: unknown) => {
+  const validationResults = signupSchemaClient.safeParse(fields);
+
+  if (validationResults.success) {
+    return null;
+  }
+
+  const { fieldErrors } = z.flattenError(validationResults.error);
+
+  return fieldErrors; // todo update incorrect documentation on zod
+};
+
+const validatePasswordStrength = (password: string): ValidatorResult => {
   const { score, feedback } = zxcvbn(password);
 
   if (score >= MIN_PASSWORD_STRENGTH) {
@@ -38,8 +48,8 @@ const validatePasswordStrength = async (password: string): Promise<ValidatorResu
   return { isValid: false, message: feedback.warning || 'Unsafe password' };
 };
 
-const validateUsername = async (username: string): Promise<ValidatorResult> => {
-  const isCleanUsername = !Boolean(profanity.exists(username));
+const validateUsername = (username: string): ValidatorResult => {
+  const isCleanUsername = !profanity.exists(username);
 
   if (isCleanUsername) {
     return { isValid: true };
@@ -48,12 +58,22 @@ const validateUsername = async (username: string): Promise<ValidatorResult> => {
   return { isValid: false, message: 'Unbecoming username' };
 };
 
-// backend
-export const signupSchemaExtended = signupSchemaBase.superRefine(
+const validateXAsync = (): Promise<ValidatorResult> => {
+  const { promise, resolve } = Promise.withResolvers<ValidatorResult>();
+
+  setTimeout(() => {
+    resolve({ isValid: true });
+  }, 250);
+
+  return promise;
+};
+
+export const signupSchemaServer = signupSchemaClient.superRefine(
   async ({ password, username }, context) => {
-    const passwordStrengthValidatorResult = await validatePasswordStrength(password);
-    const usernameValidatorResult = await validateUsername(username);
+    const passwordStrengthValidatorResult = validatePasswordStrength(password);
+    const usernameValidatorResult = validateUsername(username);
     const isPasswordContainingUsername = password.toLowerCase().includes(username.toLowerCase());
+    const isAsyncValidator = await validateXAsync();
 
     if (!passwordStrengthValidatorResult.isValid) {
       context.addIssue({
@@ -86,5 +106,7 @@ export const signupSchemaExtended = signupSchemaBase.superRefine(
         path: ['password'],
       });
     }
+
+    console.info(isAsyncValidator);
   },
 );

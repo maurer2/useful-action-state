@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { z } from 'zod';
 
-import { signupSchemaExtended } from './signup.function';
+import { signupSchemaServer } from './signup';
 
 describe('Signup Schema Extended', () => {
   const validUsername = faker.person.fullName();
@@ -9,7 +9,7 @@ describe('Signup Schema Extended', () => {
 
   describe('password and username', () => {
     it('should pass when username and password are filled in', async () => {
-      const result = await signupSchemaExtended.safeParseAsync({
+      const result = await signupSchemaServer.safeParseAsync({
         username: validUsername,
         password: strongPassword,
       });
@@ -18,7 +18,7 @@ describe('Signup Schema Extended', () => {
     });
 
     it('should fail when username and/or password are missing', async () => {
-      const result = await signupSchemaExtended.safeParseAsync({
+      const result = await signupSchemaServer.safeParseAsync({
         username: '',
         password: '',
       });
@@ -38,7 +38,7 @@ describe('Signup Schema Extended', () => {
 
   describe('password', () => {
     it('should fail when password is too weak', async () => {
-      const result = await signupSchemaExtended.safeParseAsync({
+      const result = await signupSchemaServer.safeParseAsync({
         username: validUsername,
         password: 'meow',
       });
@@ -54,7 +54,7 @@ describe('Signup Schema Extended', () => {
     });
 
     it('should fail when password contains username', async () => {
-      const result = await signupSchemaExtended.safeParseAsync({
+      const result = await signupSchemaServer.safeParseAsync({
         username: 'mrmeowgi',
         password: `mrmeowgi_${strongPassword}`,
       });
@@ -72,7 +72,7 @@ describe('Signup Schema Extended', () => {
 
   describe('username', () => {
     it('should fail when username contains profanity', async () => {
-      const result = await signupSchemaExtended.safeParseAsync({
+      const result = await signupSchemaServer.safeParseAsync({
         username: 'twat-waffle',
         password: strongPassword,
       });
