@@ -81,10 +81,21 @@ function ActivityTest() {
                 {query}
               </output>
             </p>
-            <h3 id={headlineLetterCountId} className="mb-normal">
-              Letter frequency
-            </h3>
-            <Counter text={query} labelId={headlineLetterCountId} />
+            <Counter text={query} labelId={headlineLetterCountId}>
+              {({ numberOfLettersTotal, numberOfUniqueLetters }) => (
+                <h3 id={headlineLetterCountId} className="mb-normal">
+                  <span>Letter frequency </span>
+                  <span
+                    role="status"
+                    aria-live="polite"
+                    aria-atomic="true"
+                    className="before:content-['('] after:content-[')']"
+                  >
+                    {numberOfLettersTotal} letters in total, {numberOfUniqueLetters} unique
+                  </span>
+                </h3>
+              )}
+            </Counter>
           </div>
         </Activity>
       </section>

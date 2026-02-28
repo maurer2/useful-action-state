@@ -1,9 +1,22 @@
+import { useState, type ReactNode } from 'react';
+import { Temporal } from '@js-temporal/polyfill';
+
 type CounterProps = {
   text: string;
   labelId?: string;
+  // FaCC
+  children?: ({
+    numberOfLettersTotal,
+    numberOfUniqueLetters,
+  }: {
+    numberOfLettersTotal: number;
+    numberOfUniqueLetters: number;
+  }) => ReactNode;
 };
 
-export function Counter({ text, labelId }: CounterProps) {
+export function Counter({ text, labelId, children }: CounterProps) {
+  const [startDate] = useState(Temporal.Now.plainTimeISO()); // does not get reset when activity is set to background rendering state
+
   const textWithLettersOnly = text.replace(/[^a-zA-Z]/g, '').toUpperCase();
 
   // const uniqueLetters = new Set(textWithLettersOnly);
@@ -14,8 +27,14 @@ export function Counter({ text, labelId }: CounterProps) {
     letterFrequencies.set(character, count + 1);
   }
 
+  console.log(startDate.toLocaleString('en-GB'));
+
   return (
     <>
+      {children?.({
+        numberOfLettersTotal: textWithLettersOnly.length,
+        numberOfUniqueLetters: letterFrequencies.size,
+      })}
       {textWithLettersOnly.length ? (
         <dl
           aria-labelledby={labelId}
@@ -29,7 +48,7 @@ export function Counter({ text, labelId }: CounterProps) {
           ))}
         </dl>
       ) : (
-        <p>No letters</p>
+        <p>No results</p>
       )}
     </>
   );
