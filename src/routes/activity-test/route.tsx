@@ -1,7 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Activity, useMemo, useState } from 'react';
+import { Activity, useMemo, useState, useId } from 'react';
 import { debounce } from 'es-toolkit';
 import type { ChangeEvent } from 'react';
+
+import { Counter } from './components/Counter';
 
 export const Route = createFileRoute('/activity-test')({
   component: ActivityTest,
@@ -12,6 +14,7 @@ type Fields = 'query' | 'query2';
 function ActivityTest() {
   const [query, setQuery] = useState('');
   const [showQuery, setShowQuery] = useState(false);
+  const headlineLetterCountId = useId();
 
   function submitAction(formData: FormData) {
     const value = formData.get('query');
@@ -72,7 +75,16 @@ function ActivityTest() {
         <h2>Results (Rendered hidden, not revealed until user stops typing)</h2>
         <Activity mode={showQuery ? 'visible' : 'hidden'}>
           <div role="status" aria-live="polite" aria-atomic="true" className="mt-normal">
-            <output htmlFor="query">{query}</output>
+            <p className="mb-normal">
+              <span>Your search query is: </span>
+              <output htmlFor="query" className="italic">
+                {query}
+              </output>
+            </p>
+            <h3 id={headlineLetterCountId} className="mb-normal">
+              Letter frequency
+            </h3>
+            <Counter text={query} labelId={headlineLetterCountId} />
           </div>
         </Activity>
       </section>
