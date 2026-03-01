@@ -1,21 +1,20 @@
-import { useState, type ReactNode } from 'react';
+import { useState, useMemo, type ReactNode } from 'react';
 import { Temporal } from '@js-temporal/polyfill';
+
+type ChildrenCallbackProps = {
+  numberOfLetters: number;
+  numberOfUniqueLetters: number;
+};
 
 type CounterProps = {
   text: string;
   labelId?: string;
   // FaCC
-  children?: ({
-    numberOfLettersTotal,
-    numberOfUniqueLetters,
-  }: {
-    numberOfLettersTotal: number;
-    numberOfUniqueLetters: number;
-  }) => ReactNode;
+  children?: ({ numberOfLetters, numberOfUniqueLetters }: ChildrenCallbackProps) => ReactNode;
 };
 
 export function Counter({ text, labelId, children }: CounterProps) {
-  const [startDate] = useState(Temporal.Now.plainTimeISO()); // does not get reset when activity is set to background rendering state
+  const [startDate] = useState(() => Temporal.Now.plainTimeISO()); // doesn't get reset when activity is set to background rendering state
 
   const textWithLettersOnly = text.replace(/[^a-zA-Z]/g, '').toUpperCase();
 
@@ -23,18 +22,23 @@ export function Counter({ text, labelId, children }: CounterProps) {
   const letterFrequencies = new Map<string, number>();
   for (const character of textWithLettersOnly) {
     const count = letterFrequencies.getOrInsertComputed(character, () => 0);
-
     letterFrequencies.set(character, count + 1);
   }
 
   console.log(startDate.toLocaleString('en-GB'));
 
+  // still needed with compiler for referential stability
+  const childrenCallbackProps = useMemo<ChildrenCallbackProps>(
+    () => ({
+      numberOfLetters: textWithLettersOnly.length,
+      numberOfUniqueLetters: letterFrequencies.size,
+    }),
+    [textWithLettersOnly.length, letterFrequencies.size],
+  );
+
   return (
     <>
-      {children?.({
-        numberOfLettersTotal: textWithLettersOnly.length,
-        numberOfUniqueLetters: letterFrequencies.size,
-      })}
+      {children?.(childrenCallbackProps)}
       {textWithLettersOnly.length ? (
         <dl
           aria-labelledby={labelId}

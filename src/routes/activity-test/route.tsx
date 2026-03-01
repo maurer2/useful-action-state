@@ -1,5 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Activity, useMemo, useState, useId } from 'react';
+import {
+  Activity,
+  useMemo,
+  useState,
+  useId,
+  useCallback,
+  type ComponentPropsWithoutRef,
+} from 'react';
 import { debounce } from 'es-toolkit';
 import type { ChangeEvent } from 'react';
 
@@ -10,6 +17,7 @@ export const Route = createFileRoute('/activity-test')({
 });
 
 type Fields = 'query' | 'query2';
+type CounterProps = ComponentPropsWithoutRef<typeof Counter>;
 
 function ActivityTest() {
   const [query, setQuery] = useState('');
@@ -41,6 +49,27 @@ function ActivityTest() {
     setShowQuery(false); // set activity back to background rendering state in case it was previously set to visible
     debouncedShowQuery();
   };
+
+  // still needed with compiler for referential stability
+  const renderCounterHeadline = useCallback(
+    ({
+      numberOfLetters,
+      numberOfUniqueLetters,
+    }: Parameters<NonNullable<CounterProps['children']>>[0]) => (
+      <h3 id={headlineLetterCountId} className="mb-normal">
+        <span>Letter frequency </span>
+        <span
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          className="before:content-['('] after:content-[')']"
+        >
+          {numberOfLetters} letters, {numberOfUniqueLetters} unique letters
+        </span>
+      </h3>
+    ),
+    [],
+  );
 
   return (
     <>
@@ -82,19 +111,9 @@ function ActivityTest() {
               </output>
             </p>
             <Counter text={query} labelId={headlineLetterCountId}>
-              {({ numberOfLettersTotal, numberOfUniqueLetters }) => (
-                <h3 id={headlineLetterCountId} className="mb-normal">
-                  <span>Letter frequency </span>
-                  <span
-                    role="status"
-                    aria-live="polite"
-                    aria-atomic="true"
-                    className="before:content-['('] after:content-[')']"
-                  >
-                    {numberOfLettersTotal} letters in total, {numberOfUniqueLetters} unique
-                  </span>
-                </h3>
-              )}
+              {({ numberOfLetters, numberOfUniqueLetters }) =>
+                renderCounterHeadline({ numberOfLetters, numberOfUniqueLetters })
+              }
             </Counter>
           </div>
         </Activity>
