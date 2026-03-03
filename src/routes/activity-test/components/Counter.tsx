@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState, useEffect, useEffectEvent, type ReactNode } from 'react';
 import { Temporal } from '@js-temporal/polyfill';
 
 type CounterProps = {
@@ -9,6 +9,7 @@ type CounterProps = {
 
 export function Counter({ text, labelId, children }: CounterProps) {
   const [startDate] = useState(() => Temporal.Now.plainTimeISO()); // doesn't get reset when activity is set to background rendering state
+  const [count, setCount] = useState(0);
 
   const textWithLettersOnly = text.replace(/[^a-zA-Z]/g, '').toUpperCase();
 
@@ -19,20 +20,35 @@ export function Counter({ text, labelId, children }: CounterProps) {
     letterFrequencies.set(character, count + 1);
   }
 
-  console.log(startDate.toLocaleString('en-GB'));
+  const onCountChange = useEffectEvent(() => {
+    setCount((prevCount) => prevCount + 1);
+  });
+
+  // paused while activity is inactive
+  useEffect(() => {
+    let timeoutId: number | undefined = undefined;
+
+    const updateCount = () => {
+      onCountChange();
+      timeoutId = window.setTimeout(updateCount, 1000);
+    };
+
+    timeoutId = window.setTimeout(updateCount, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  console.log(count);
 
   return (
     <>
       <div className="mb-normal empty:mb-0">{children}</div>
       {textWithLettersOnly.length ? (
         <>
-          <p
-            role="status"
-            aria-live="polite"
-            aria-atomic="true"
-            className="mb-normal before:content-['('] after:content-[')']"
-          >
-            {textWithLettersOnly.length} letters, {letterFrequencies.size} unique letters
+          <p role="status" aria-live="polite" aria-atomic="true" className="mb-normal">
+            Status: <span>{textWithLettersOnly.length} letters</span>,{' '}
+            <span>{letterFrequencies.size} unique letters</span>,{' '}
+            <span>first search at {startDate.toLocaleString('en-GB')}</span>
           </p>
           <dl
             aria-labelledby={labelId}
