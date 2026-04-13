@@ -65,6 +65,10 @@ const navLinks = [
     to: '/validity-state-api',
     label: 'Validity-state-api',
   },
+  {
+    to: '/server-components',
+    label: 'Server components',
+  },
 ] satisfies (LinkProps & { label: string })[];
 
 function RootComponent() {
@@ -101,6 +105,7 @@ function RootDocument({ children }: PropsWithChildren) {
         <TanStackDevtools
           config={{
             position: 'bottom-right',
+            panelLocation: 'bottom',
           }}
           plugins={[
             {

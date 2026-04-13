@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ValidityStateApiRouteRouteImport } from './routes/validity-state-api/route'
+import { Route as ServerComponentsRouteRouteImport } from './routes/server-components/route'
 import { Route as ClientSideFormSubmitRouteRouteImport } from './routes/client-side-form-submit/route'
 import { Route as ActivityTestRouteRouteImport } from './routes/activity-test/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -18,6 +19,11 @@ import { Route as ApiUsersRouteImport } from './routes/api/users'
 const ValidityStateApiRouteRoute = ValidityStateApiRouteRouteImport.update({
   id: '/validity-state-api',
   path: '/validity-state-api',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServerComponentsRouteRoute = ServerComponentsRouteRouteImport.update({
+  id: '/server-components',
+  path: '/server-components',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClientSideFormSubmitRouteRoute =
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activity-test': typeof ActivityTestRouteRoute
   '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
+  '/server-components': typeof ServerComponentsRouteRoute
   '/validity-state-api': typeof ValidityStateApiRouteRoute
   '/api/users': typeof ApiUsersRoute
 }
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity-test': typeof ActivityTestRouteRoute
   '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
+  '/server-components': typeof ServerComponentsRouteRoute
   '/validity-state-api': typeof ValidityStateApiRouteRoute
   '/api/users': typeof ApiUsersRoute
 }
@@ -61,6 +69,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/activity-test': typeof ActivityTestRouteRoute
   '/client-side-form-submit': typeof ClientSideFormSubmitRouteRoute
+  '/server-components': typeof ServerComponentsRouteRoute
   '/validity-state-api': typeof ValidityStateApiRouteRoute
   '/api/users': typeof ApiUsersRoute
 }
@@ -70,6 +79,7 @@ export interface FileRouteTypes {
     | '/'
     | '/activity-test'
     | '/client-side-form-submit'
+    | '/server-components'
     | '/validity-state-api'
     | '/api/users'
   fileRoutesByTo: FileRoutesByTo
@@ -77,6 +87,7 @@ export interface FileRouteTypes {
     | '/'
     | '/activity-test'
     | '/client-side-form-submit'
+    | '/server-components'
     | '/validity-state-api'
     | '/api/users'
   id:
@@ -84,6 +95,7 @@ export interface FileRouteTypes {
     | '/'
     | '/activity-test'
     | '/client-side-form-submit'
+    | '/server-components'
     | '/validity-state-api'
     | '/api/users'
   fileRoutesById: FileRoutesById
@@ -92,6 +104,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActivityTestRouteRoute: typeof ActivityTestRouteRoute
   ClientSideFormSubmitRouteRoute: typeof ClientSideFormSubmitRouteRoute
+  ServerComponentsRouteRoute: typeof ServerComponentsRouteRoute
   ValidityStateApiRouteRoute: typeof ValidityStateApiRouteRoute
   ApiUsersRoute: typeof ApiUsersRoute
 }
@@ -103,6 +116,13 @@ declare module '@tanstack/react-router' {
       path: '/validity-state-api'
       fullPath: '/validity-state-api'
       preLoaderRoute: typeof ValidityStateApiRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/server-components': {
+      id: '/server-components'
+      path: '/server-components'
+      fullPath: '/server-components'
+      preLoaderRoute: typeof ServerComponentsRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/client-side-form-submit': {
@@ -140,6 +160,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActivityTestRouteRoute: ActivityTestRouteRoute,
   ClientSideFormSubmitRouteRoute: ClientSideFormSubmitRouteRoute,
+  ServerComponentsRouteRoute: ServerComponentsRouteRoute,
   ValidityStateApiRouteRoute: ValidityStateApiRouteRoute,
   ApiUsersRoute: ApiUsersRoute,
 }

@@ -4,6 +4,7 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import viteReact from '@vitejs/plugin-react';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
+import rsc from '@vitejs/plugin-rsc';
 import type { Logger } from 'babel-plugin-react-compiler';
 
 const config = defineConfig({
@@ -13,14 +14,14 @@ const config = defineConfig({
       projects: ['./tsconfig.json'],
     }),
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart({ rsc: { enabled: true } }),
+    rsc(),
     viteReact({
       babel: {
         plugins: [
           [
             'babel-plugin-react-compiler',
             {
-              debug: true,
               logger: {
                 logEvent(filename, event) {
                   switch (event.kind) {
