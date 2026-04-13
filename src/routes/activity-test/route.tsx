@@ -1,9 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Activity, useMemo, useState, useId } from 'react';
 import { debounce } from 'es-toolkit';
+import { Counter } from './components/-Counter';
 import type { ChangeEvent } from 'react';
-
-import { Counter } from './components/Counter';
 
 export const Route = createFileRoute('/activity-test')({
   component: ActivityTest,
@@ -72,7 +71,10 @@ function ActivityTest() {
       </search>
 
       <section>
-        <h2>Results (Rendered hidden, not revealed until user stops typing)</h2>
+        <h2>
+          Results (Rendered hidden, not revealed until user stops typing, while component state is
+          preserved)
+        </h2>
         <Activity mode={showQuery ? 'visible' : 'hidden'}>
           <div role="status" aria-live="polite" aria-atomic="true" className="mt-normal">
             <p className="mb-normal">

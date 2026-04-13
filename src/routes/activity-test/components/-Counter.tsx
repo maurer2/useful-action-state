@@ -16,8 +16,8 @@ export function Counter({ text, labelId, children }: CounterProps) {
   // const uniqueLetters = new Set(textWithLettersOnly);
   const letterFrequencies = new Map<string, number>();
   for (const character of textWithLettersOnly) {
-    const count = letterFrequencies.getOrInsertComputed(character, () => 0);
-    letterFrequencies.set(character, count + 1);
+    const currentCount = letterFrequencies.getOrInsertComputed(character, () => 0);
+    letterFrequencies.set(character, currentCount + 1);
   }
 
   const onCountChange = useEffectEvent(() => {
