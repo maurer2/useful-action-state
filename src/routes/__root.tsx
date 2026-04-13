@@ -4,6 +4,7 @@ import {
   Outlet,
   Scripts,
   createRootRouteWithContext,
+  type LinkProps,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { TanStackDevtools } from '@tanstack/react-devtools';
@@ -47,6 +48,25 @@ export const Route = createRootRouteWithContext()({
   shellComponent: RootComponent,
 });
 
+const navLinks = [
+  {
+    to: '/',
+    label: 'Home',
+  },
+  {
+    to: '/client-side-form-submit',
+    label: 'Client side form with uncontrolled components',
+  },
+  {
+    to: '/activity-test',
+    label: 'Activity component',
+  },
+  {
+    to: '/validity-state-api',
+    label: 'Validity-state-api',
+  },
+] satisfies (LinkProps & { label: string })[];
+
 function RootComponent() {
   return (
     <RootDocument>
@@ -63,46 +83,19 @@ function RootDocument({ children }: PropsWithChildren) {
       </head>
       <body>
         <nav className="mb-large border-foreground p-normal gap-normal flex flex-wrap border-b text-lg">
-          <Link
-            to="/"
-            className="focus-visible:outline-highlight hover:underline focus-visible:underline focus-visible:outline-offset-4"
-            activeProps={{
-              className: 'font-bold',
-            }}
-            activeOptions={{ exact: true }}
-          >
-            Home
-          </Link>
-          <Link
-            to="/client-side-form-submit"
-            className="focus-visible:outline-highlight hover:underline focus-visible:underline focus-visible:outline-offset-4"
-            activeProps={{
-              className: 'font-bold',
-            }}
-            activeOptions={{ exact: true }}
-          >
-            Client side form with uncontrolled components
-          </Link>
-          <Link
-            to="/activity-test"
-            className="focus-visible:outline-highlight hover:underline focus-visible:underline focus-visible:outline-offset-4"
-            activeProps={{
-              className: 'font-bold',
-            }}
-            activeOptions={{ exact: true }}
-          >
-            Activity component
-          </Link>
-          <Link
-            to="/validity-state-api"
-            className="focus-visible:outline-highlight hover:underline focus-visible:underline focus-visible:outline-offset-4"
-            activeProps={{
-              className: 'font-bold',
-            }}
-            activeOptions={{ exact: true }}
-          >
-            Validity-state-api
-          </Link>
+          {navLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className="focus-visible:outline-highlight hover:underline focus-visible:underline focus-visible:outline-offset-4"
+              activeProps={{
+                className: 'font-bold',
+              }}
+              activeOptions={{ exact: true }}
+            >
+              {link.label}
+            </Link>
+          ))}
         </nav>
         <main className="mx-normal">{children}</main>
         <TanStackDevtools
